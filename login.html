@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login — NovaShelf</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <div class="centered-form" style="display:flex;align-items:center;justify-content:center;height:100vh;">
+    <div style="background:#ffffff;padding:32px 28px;border-radius:12px;box-shadow:0 2px 16px #0004;width:340px;">
+      <h2 style="text-align:center;margin-bottom:18px;">NovaShelf Login</h2>
+      <div id="formToggle" style="text-align:center;margin-bottom:18px;">
+        <button class="btn" id="showLogin" style="margin-right:8px;">Login</button>
+        <button class="btn" id="showSignup">Sign Up</button>
+      </div>
+      <form id="loginForm">
+        <label>Email</label>
+        <input id="loginEmail" type="email" required />
+        <label>Password</label>
+        <input id="loginPassword" type="password" required />
+        <button class="btn primary" type="submit" style="width:100%;margin-top:16px;">Login</button>
+      </form>
+      <form id="signupForm" style="display:none;">
+        <label>Name</label>
+        <input id="signupName" type="text" required />
+        <label>Address</label>
+        <input id="signupAddress" type="text" required />
+        <label>Email</label>
+        <input id="signupEmail" type="email" required />
+        <label>Password</label>
+        <input id="signupPassword" type="password" required />
+        <button class="btn primary" type="submit" style="width:100%;margin-top:16px;">Sign Up</button>
+      </form>
+      <div id="loginError" style="color:#f66;margin-top:12px;text-align:center;"></div>
+    </div>
+  </div>
+  <script>
+    // Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyB8mdp6ljaXcwNJnLYIJtv_l5EO4P-ew1U",
+      authDomain: "novashelf-8c7a2.firebaseapp.com",
+      projectId: "novashelf-8c7a2",
+      storageBucket: "novashelf-8c7a2.appspot.com",
+      messagingSenderId: "808747580675",
+      appId: "1:808747580675:web:ac6255dc67ce519d0c3d36",
+      measurementId: "G-JD1S51PDF8"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Toggle forms
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    document.getElementById('showLogin').onclick = () => {
+      loginForm.style.display = '';
+      signupForm.style.display = 'none';
+      document.getElementById('loginError').textContent = '';
+    };
+    document.getElementById('showSignup').onclick = () => {
+      loginForm.style.display = 'none';
+      signupForm.style.display = '';
+      document.getElementById('loginError').textContent = '';
+    };
+
+    // Login
+    loginForm.onsubmit = async e => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const pw = document.getElementById('loginPassword').value;
+      try {
+        await auth.signInWithEmailAndPassword(email, pw);
+        window.location = "index.html";
+      } catch (err) {
+        document.getElementById('loginError').textContent = err.message;
+      }
+    };
+
+    // Sign up (do NOT auto-login)
+    signupForm.onsubmit = async e => {
+      e.preventDefault();
+      const name = document.getElementById('signupName').value.trim();
+      const address = document.getElementById('signupAddress').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const pw = document.getElementById('signupPassword').value;
+      if (!name || !address || !email || !pw) {
+        document.getElementById('loginError').textContent = "All fields are required.";
+        return;
+      }
+      try {
+        const cred = await auth.createUserWithEmailAndPassword(email, pw);
+        // Save name and address to Firestore under users collection
+        await db.collection('users').doc(cred.user.uid).set({
+          name,
+          address,
+          email
+        });
+        await auth.signOut();
+        alert("Account Successfully Created");
+        loginForm.style.display = '';
+        signupForm.style.display = 'none';
+        document.getElementById('loginError').textContent = "";
+      } catch (err) {
+        document.getElementById('loginError').textContent = err.message;
+      }
+    };
+
+  </script>
+</body>
+</html>

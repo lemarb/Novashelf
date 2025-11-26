@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NovaShelf — Online Library</title>
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="script.js"></script>
+    <link rel="icon" type="image/png" href="favicon.png" />
+</head>
+<body>
+  <div class="app" id="dashboard">
+    <header>
+      <div class="logo">
+        <div class="mark">NS</div>
+        <div>
+          <h1>NovaShelf</h1>
+          <div style="font-size:12px;color:var(--muted)">Online Collection Library</div>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="auth" id="auth-controls">
+          <!-- Login/Sign Up buttons removed -->
+        </div>
+        <button class="btn primary" id="addNovelBtn">+ Add Novel</button>
+        <button class="btn" id="settingsBtn">Settings</button>
+      </div>
+    </header>
+
+    <div class="search-row">
+      <input type="text" id="searchInput" class="search" placeholder="Search by title or author..." />
+      <select id="genreFilter"><option value="">All Genres</option>
+        <option>Fantasy</option>
+        <option>Romance</option>
+        <option>Mystery</option>
+        <option>Science Fiction</option>
+        <option>Horror</option>
+        <option>Thriller</option>
+        <option>Non-fiction</option>
+      </select>
+    </div>
+
+    <section id="novelGrid" class="grid" aria-live="polite">
+    </section>
+
+    <div id="pagination" style="display:flex;justify-content:center;align-items:center;gap:12px;margin:24px 0;">
+      <button class="btn" id="prevPageBtn">Prev</button>
+      <span id="pageIndicator">Page 1</span>
+      <button class="btn" id="nextPageBtn">Next</button>
+    </div>
+
+    <div id="addNovelModal" style="display:none;position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:1000">
+      <div style="width:440px;background:#ffffff;padding:18px 18px 0 18px;border-radius:12px;border:1px solid rgba(0,0,0,0.1)">
+        <h3>Add a novel</h3>
+        <div class="row">
+          <div style="flex:1">
+            <label>Title</label>
+            <input id="novelTitle" type="text" />
+          </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <div style="flex:1">
+            <label>Author</label>
+            <input id="novelAuthor" type="text" />
+          </div>
+          <div style="width:200px">
+            <label>Genre</label>
+            <select id="novelGenre">
+              <option value="">Select Genre</option>
+              <option>Fantasy</option>
+              <option>Romance</option>
+              <option>Mystery</option>
+              <option>Science Fiction</option>
+              <option>Horror</option>
+              <option>Thriller</option>
+              <option>Non-fiction</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:10px">
+          <label>Description</label>
+          <textarea id="novelDesc"></textarea>
+        </div>
+        <div style="margin-top:10px" class="row">
+          <div style="flex:1">
+            <label>Cover Image</label>
+            <input id="novelCover" type="file" accept="image/*" />
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:18px;gap:8px">
+          <button class="btn" id="addNovelCancel">Cancel</button>
+          <button class="btn primary" id="saveNovel">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="novelModal" style="display:none;position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(0,0,0,0.6)">
+      <div style="width:500px;max-height:85vh;overflow-y:auto;background:#ffffff;padding:40px;margin:32px;border-radius:12px;border:1px solid rgba(0,0,0,0.1)">
+        <img id="novelModalCover" src="" alt="Cover" style="width:100%;max-height:240px;object-fit:cover;border-radius:10px;box-shadow:0 2px 8px #0002;margin-bottom:12px;display:none" />
+        <h3 id="novelModalTitle"></h3>
+        <div id="novelModalAuthor" style="margin-top:8px"></div>
+        <div id="novelModalGenre" style="margin-top:8px"></div>
+        <div id="novelModalRating" style="margin-top:8px"></div>
+        <div id="novelModalDesc" style="margin-top:12px;color:var(--muted);font-size:13px"></div>
+        <div style="display:flex;justify-content:flex-end;margin-top:12px;gap:8px">
+          <button class="btn" id="novelModalClose">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="settingsModal" style="display:none;position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:2000">
+      <div style="width:340px;background:#ffffff;padding:24px 20px 20px 20px;border-radius:12px;border:1px solid rgba(0,0,0,0.1)">
+        <h3 style="margin-bottom:16px;">Account Settings</h3>
+        <div style="margin-bottom:10px;"><b>Name:</b> <span id="settingsName"></span></div>
+        <div style="margin-bottom:10px;"><b>Address:</b> <span id="settingsAddress"></span></div>
+        <div style="margin-bottom:10px;"><b>Email:</b> <span id="settingsEmail"></span></div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:18px;">
+          <button class="btn" id="settingsClose">Close</button>
+          <button class="btn" id="settingsLogout">Logout</button>
+        </div>
+      </div>
+    </div>
+
+    <footer style="margin-top:32px;text-align:center;color:var(--muted);font-size:15px;">
+      <div style="margin-bottom:8px;">
+        <b>About NovaShelf</b><br>
+        NovaShelf is an online library platform for managing and discovering novels.
+      </div>
+      <div>
+        Contact: <span style="color:#fff;">09058315682</span>
+        &nbsp;|&nbsp;
+        <img src="https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico" alt="Gmail" style="vertical-align:middle;width:18px;height:18px;margin-right:4px;">
+        <a href="mailto:lemar.bajado.busio@gmail.com" style="color:#7cf;">lemar.bajado.busio@gmail.com</a>
+      </div>
+    </footer>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+</body>
+</html>
