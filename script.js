@@ -209,10 +209,10 @@ if (logoutBtn) {
   logoutBtn.addEventListener('click', () => {
     if (firebase && firebase.auth) {
       firebase.auth().signOut().then(() => {
-        window.location = "login.html"; // Redirect to login page after logout
+        window.location = "index.html"; // Redirect to login page after logout
       });
     } else {
-      window.location = "login.html";
+      window.location = "index.html";
     }
   });
 }
@@ -251,10 +251,11 @@ if (settingsClose) {
 if (settingsLogout) {
   settingsLogout.addEventListener('click', () => {
     firebase.auth().signOut().then(() => {
-      window.location = "login.html";
+      window.location = "index.html";
     });
   });
 }
 
 loadNovels('none');
+
 
