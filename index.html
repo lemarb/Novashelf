@@ -74,7 +74,7 @@
       const pw = document.getElementById('loginPassword').value;
       try {
         await auth.signInWithEmailAndPassword(email, pw);
-        window.location = "index.html";
+        window.location = "dashboard.html";
       } catch (err) {
         document.getElementById('loginError').textContent = err.message;
       }
@@ -112,3 +112,4 @@
   </script>
 </body>
 </html>
+
